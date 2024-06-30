@@ -1,5 +1,3 @@
-"use client";
-
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import type {
   ControllerProps,
@@ -19,8 +17,7 @@ import {
 } from "react-hook-form";
 
 import { cn } from "@acme/ui";
-
-import { Label } from "./label";
+import { Label } from "@acme/ui/label";
 
 const useForm = <TOut, TDef extends ZodTypeDef, TIn extends FieldValues>(
   props: Omit<UseFormProps<TIn>, "resolver"> & {
@@ -44,8 +41,8 @@ interface FormFieldContextValue<
   name: TName;
 }
 
-const FormFieldContext = React.createContext<FormFieldContextValue | null>(
-  null,
+const FormFieldContext = React.createContext<FormFieldContextValue>(
+  {} as FormFieldContextValue,
 );
 
 const FormField = <
@@ -66,10 +63,12 @@ const useFormField = () => {
   const itemContext = React.useContext(FormItemContext);
   const { getFieldState, formState } = useFormContext();
 
+  const fieldState = getFieldState(fieldContext.name, formState);
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
   }
-  const fieldState = getFieldState(fieldContext.name, formState);
 
   const { id } = itemContext;
 
@@ -155,7 +154,7 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-[0.8rem] text-muted-foreground", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );
@@ -177,7 +176,7 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-[0.8rem] font-medium text-destructive", className)}
+      className={cn("text-sm font-medium text-destructive", className)}
       {...props}
     >
       {body}
